@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ProgressiveOverload.Console/ProgressiveOverload.Console.csproj" />
+  <Project Path="ProgressiveOverload.Core/ProgressiveOverload.Core.csproj" />
+</Solution>
