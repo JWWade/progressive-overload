@@ -53,6 +53,7 @@ internal sealed class InMemoryProgressiveOverloadRepository : IProgressiveOverlo
                         .Select(e => new ExerciseEntry
                         {
                             ExerciseName = e.ExerciseName,
+                            VariationName = e.VariationName,
                             Notes = e.Notes,
                             Sets = e.Sets
                                 .Select(set => new SetEntry

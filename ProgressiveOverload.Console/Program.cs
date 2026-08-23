@@ -13,6 +13,7 @@ public static class Program
 		var workoutService = new WorkoutService(repository);
 		var summaryService = new HistorySummaryService(repository);
 		var definitionService = new DefinitionService(repository);
+		var selectionService = new ExerciseSelectionService(repository);
 
 		System.Console.WriteLine("Progressive Overload Prototype");
 		System.Console.WriteLine($"Data file: {repository.DataFilePath}");
@@ -26,9 +27,10 @@ public static class Program
 			System.Console.WriteLine("2. Log workout session");
 			System.Console.WriteLine("3. View training summary");
 			System.Console.WriteLine("4. Manage movement/exercise definitions");
-			System.Console.WriteLine("5. Exit");
+			System.Console.WriteLine("5. Recommend next variation by category");
+			System.Console.WriteLine("6. Exit");
 
-			var choice = ReadInt("Choice", min: 1, max: 5);
+			var choice = ReadInt("Choice", min: 1, max: 6);
 			System.Console.WriteLine();
 
 			switch (choice)
@@ -46,10 +48,38 @@ public static class Program
 					await ManageDefinitionsAsync(definitionService);
 					break;
 				case 5:
+					await RecommendVariationAsync(selectionService);
+					break;
+				case 6:
 					exitRequested = true;
 					break;
 			}
 		}
+	}
+
+	private static async Task RecommendVariationAsync(IExerciseSelectionService selectionService)
+	{
+		var category = ReadRequiredString("Category to evaluate");
+		var recommendation = await selectionService.RecommendNextVariationAsync(category);
+
+		if (recommendation is null)
+		{
+			System.Console.WriteLine("No recommendation available. Add definitions and workout data first.");
+			return;
+		}
+
+		var lastPerformedText = recommendation.LastPerformedDate.HasValue
+			? recommendation.LastPerformedDate.Value.ToString("yyyy-MM-dd")
+			: "never";
+
+		System.Console.WriteLine("Recommended next variation:");
+		System.Console.WriteLine($"- category: {recommendation.CategoryName}");
+		System.Console.WriteLine($"- exercise: {recommendation.ExerciseName}");
+		System.Console.WriteLine($"- variation: {recommendation.VariationName}");
+		System.Console.WriteLine($"- weighted volume: {recommendation.WeightedVolume}");
+		System.Console.WriteLine($"- last performed: {lastPerformedText}");
+		System.Console.WriteLine($"- days since last performed: {recommendation.DaysSinceLastPerformed}");
+		System.Console.WriteLine($"- rationale: {recommendation.Reason}");
 	}
 
 	private static async Task ManageDefinitionsAsync(IDefinitionService definitionService)
@@ -204,6 +234,7 @@ public static class Program
 			System.Console.WriteLine($"Exercise {i + 1}:");
 
 			var exerciseName = ReadRequiredString("Exercise name");
+			var variationName = ReadOptionalString("Variation name (optional)");
 			var setCount = ReadInt("Number of sets", min: 1, max: 100);
 			var sets = new List<SetDraft>();
 
@@ -224,6 +255,7 @@ public static class Program
 			exercises.Add(new ExerciseDraft
 			{
 				ExerciseName = exerciseName,
+				VariationName = variationName,
 				Notes = exerciseNotes,
 				Sets = sets
 			});

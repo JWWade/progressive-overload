@@ -62,6 +62,7 @@ public class WorkoutService : IWorkoutService
                 .Select(e => new ExerciseEntry
                 {
                     ExerciseName = e.ExerciseName.Trim(),
+                    VariationName = string.IsNullOrWhiteSpace(e.VariationName) ? null : e.VariationName.Trim(),
                     Notes = string.IsNullOrWhiteSpace(e.Notes) ? null : e.Notes.Trim(),
                     Sets = e.Sets
                         .Select(s => new SetEntry

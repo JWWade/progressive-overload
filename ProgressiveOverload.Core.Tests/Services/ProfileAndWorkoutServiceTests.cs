@@ -90,6 +90,7 @@ public class ProfileAndWorkoutServiceTests
                 new ExerciseDraft
                 {
                     ExerciseName = "  Squat  ",
+                    VariationName = "  Strength  ",
                     Notes = "  High bar  ",
                     Sets =
                     [
@@ -107,6 +108,7 @@ public class ProfileAndWorkoutServiceTests
         Assert.Equal("Lower day", data.WorkoutSessions[0].Notes);
         Assert.Single(data.WorkoutSessions[0].Exercises);
         Assert.Equal("Squat", data.WorkoutSessions[0].Exercises[0].ExerciseName);
+        Assert.Equal("Strength", data.WorkoutSessions[0].Exercises[0].VariationName);
         Assert.Equal("High bar", data.WorkoutSessions[0].Exercises[0].Notes);
         Assert.Equal(2, data.WorkoutSessions[0].Exercises[0].Sets.Count);
     }
