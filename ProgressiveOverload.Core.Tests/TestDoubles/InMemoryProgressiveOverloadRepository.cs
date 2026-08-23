@@ -1,4 +1,5 @@
 using ProgressiveOverload.Core.Models;
+using ProgressiveOverload.Core.Models.Definitions;
 using ProgressiveOverload.Core.Persistence;
 
 namespace ProgressiveOverload.Core.Tests.TestDoubles;
@@ -63,7 +64,32 @@ internal sealed class InMemoryProgressiveOverloadRepository : IProgressiveOverlo
                         })
                         .ToList()
                 })
-                .ToList()
+                .ToList(),
+            ExerciseCatalog = new()
+            {
+                Categories = source.ExerciseCatalog.Categories
+                    .Select(c => new MovementCategory
+                    {
+                        Name = c.Name
+                    })
+                    .ToList(),
+                Exercises = source.ExerciseCatalog.Exercises
+                    .Select(e => new ExerciseDefinition
+                    {
+                        Name = e.Name,
+                        CategoryName = e.CategoryName,
+                        Notes = e.Notes,
+                        Variations = e.Variations
+                            .Select(v => new ExerciseVariationDefinition
+                            {
+                                Name = v.Name,
+                                VolumeMultiplier = v.VolumeMultiplier,
+                                Notes = v.Notes
+                            })
+                            .ToList()
+                    })
+                    .ToList()
+            }
         };
     }
 }
