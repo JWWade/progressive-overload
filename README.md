@@ -6,6 +6,7 @@ This repository contains a .NET 10 prototype for tracking progressive overload d
 
 - ProgressiveOverload.Core: reusable library for models, validation, services, and JSON persistence.
 - ProgressiveOverload.Console: menu-driven console interface that uses the core library.
+- ProgressiveOverload.WinForms: rudimentary desktop UI that uses the same core library.
 
 ## Run
 
@@ -13,6 +14,8 @@ This repository contains a .NET 10 prototype for tracking progressive overload d
    - `dotnet build ProgressiveOverload.slnx`
 2. Run the console app:
    - `dotnet run --project ProgressiveOverload.Console/ProgressiveOverload.Console.csproj`
+3. Run the WinForms desktop app:
+   - `dotnet run --project ProgressiveOverload.WinForms/ProgressiveOverload.WinForms.csproj`
 
 ## Persisted Data Location
 
