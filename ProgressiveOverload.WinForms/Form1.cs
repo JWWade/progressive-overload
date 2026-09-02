@@ -154,9 +154,12 @@ public partial class Form1 : Form
         panel.Controls.Add(new Label { Text = "Exercises (one row per exercise)", AutoSize = true }, 0, 1);
 
         ConfigureWorkoutExerciseGrid();
+        _workoutExerciseGrid.CellValueChanged += (_, _) => RefreshWorkoutSetExerciseOptions();
+        _workoutExerciseGrid.RowsAdded += (_, _) => RefreshWorkoutSetExerciseOptions();
+        _workoutExerciseGrid.RowsRemoved += (_, _) => RefreshWorkoutSetExerciseOptions();
         panel.Controls.Add(_workoutExerciseGrid, 0, 2);
 
-        panel.Controls.Add(new Label { Text = "Sets (Exercise # maps to exercise row number starting at 1)", AutoSize = true }, 0, 3);
+        panel.Controls.Add(new Label { Text = "Sets (pick the matching exercise row)", AutoSize = true }, 0, 3);
 
         ConfigureWorkoutSetGrid();
         panel.Controls.Add(_workoutSetGrid, 0, 4);
@@ -321,9 +324,54 @@ public partial class Form1 : Form
         _workoutSetGrid.AutoGenerateColumns = false;
         _workoutSetGrid.AllowUserToAddRows = true;
         _workoutSetGrid.AllowUserToDeleteRows = true;
-        _workoutSetGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Exercise #", Name = "ExerciseIndex", Width = 90 });
+        _workoutSetGrid.Columns.Add(new DataGridViewComboBoxColumn
+        {
+            HeaderText = "Exercise",
+            Name = "ExerciseKey",
+            Width = 240,
+            FlatStyle = FlatStyle.Flat
+        });
         _workoutSetGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Reps", Name = "Reps", Width = 80 });
         _workoutSetGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Weight", Name = "Weight", Width = 100 });
+    }
+
+    private void RefreshWorkoutSetExerciseOptions()
+    {
+        if (_workoutSetGrid.Columns["ExerciseKey"] is not DataGridViewComboBoxColumn comboColumn)
+        {
+            return;
+        }
+
+        var exerciseKeys = BuildWorkoutExerciseKeysFromGrid();
+        comboColumn.Items.Clear();
+        comboColumn.Items.AddRange(exerciseKeys.ToArray());
+    }
+
+    private List<string> BuildWorkoutExerciseKeysFromGrid()
+    {
+        var keys = new List<string>();
+        var counter = 1;
+
+        foreach (DataGridViewRow row in _workoutExerciseGrid.Rows)
+        {
+            if (row.IsNewRow)
+            {
+                continue;
+            }
+
+            var exercise = GetCellText(row, "Exercise");
+            if (string.IsNullOrWhiteSpace(exercise))
+            {
+                continue;
+            }
+
+            var variation = EmptyToNull(GetCellText(row, "Variation"));
+            var variationSuffix = variation is null ? string.Empty : $" ({variation})";
+            keys.Add($"{counter}: {exercise}{variationSuffix}");
+            counter++;
+        }
+
+        return keys;
     }
 
     private void ConfigureVariationGrid()
@@ -406,7 +454,8 @@ public partial class Form1 : Form
     {
         try
         {
-            var exerciseRows = new List<(string Exercise, string? Variation, string? Notes)>();
+            var exerciseRows = new List<(string Key, string Exercise, string? Variation, string? Notes)>();
+            var rowCounter = 1;
             foreach (DataGridViewRow row in _workoutExerciseGrid.Rows)
             {
                 if (row.IsNewRow)
@@ -420,7 +469,12 @@ public partial class Form1 : Form
                     continue;
                 }
 
-                exerciseRows.Add((exerciseName, EmptyToNull(GetCellText(row, "Variation")), EmptyToNull(GetCellText(row, "Notes"))));
+                var variation = EmptyToNull(GetCellText(row, "Variation"));
+                var variationSuffix = variation is null ? string.Empty : $" ({variation})";
+                var key = $"{rowCounter}: {exerciseName}{variationSuffix}";
+
+                exerciseRows.Add((key, exerciseName, variation, EmptyToNull(GetCellText(row, "Notes"))));
+                rowCounter++;
             }
 
             if (exerciseRows.Count == 0)
@@ -428,6 +482,11 @@ public partial class Form1 : Form
                 SetStatus("Add at least one exercise row before saving a workout.");
                 return;
             }
+
+            RefreshWorkoutSetExerciseOptions();
+            var keyToExerciseNumber = exerciseRows
+                .Select((x, i) => new { x.Key, ExerciseNumber = i + 1 })
+                .ToDictionary(x => x.Key, x => x.ExerciseNumber, StringComparer.OrdinalIgnoreCase);
 
             var setsByExercise = new Dictionary<int, List<SetDraft>>();
             foreach (DataGridViewRow row in _workoutSetGrid.Rows)
@@ -437,9 +496,10 @@ public partial class Form1 : Form
                     continue;
                 }
 
-                if (!TryReadInt(row, "ExerciseIndex", out var exerciseIndex) || exerciseIndex <= 0 || exerciseIndex > exerciseRows.Count)
+                var selectedExerciseKey = GetCellText(row, "ExerciseKey");
+                if (string.IsNullOrWhiteSpace(selectedExerciseKey) || !keyToExerciseNumber.TryGetValue(selectedExerciseKey, out var exerciseIndex))
                 {
-                    SetStatus($"Set rows require a valid Exercise # between 1 and {exerciseRows.Count}.");
+                    SetStatus("Each set row must select a valid Exercise from the dropdown.");
                     return;
                 }
 
