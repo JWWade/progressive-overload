@@ -93,6 +93,9 @@
     document.getElementById('nextReps').textContent = String(result.nextReps);
     document.getElementById('nextSets').textContent = String(result.nextSets);
     document.getElementById('strategySummary').textContent = result.summary;
+    document.querySelectorAll('.weight-unit').forEach(function (element) {
+      element.textContent = result.unit;
+    });
 
     var strategy = form.strategy.value;
     var percentField = form.percentIncrease.closest('label');
@@ -128,7 +131,6 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
         navigator.serviceWorker.register('service-worker.js').catch(function () {
-          // Ignore failed registration; the app still works as a static page.
         });
       });
     }
