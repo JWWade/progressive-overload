@@ -1,26 +1,43 @@
-# Progressive Overload
+# Progressive Overload Calculator
 
-This repository contains a .NET 10 prototype for tracking progressive overload data in resistance training.
+A minimal, dependency-free progressive overload calculator designed for fast use on a phone.
 
-## Projects
+## What it does
 
-- ProgressiveOverload.Core: reusable library for models, validation, services, and JSON persistence.
-- ProgressiveOverload.Console: menu-driven console interface that uses the core library.
-- ProgressiveOverload.WinForms: rudimentary desktop UI that uses the same core library.
+- Calculates the next workout target from your current weight, reps, and sets
+- Supports four simple overload strategies:
+  - Add weight
+  - Add reps
+  - Add percentage
+  - Double progression
+- Works as a static site with no build step
+- Includes a basic web app manifest and service worker so it can be added to a phone home screen
 
-## Run
+## Local use
 
-1. Build the solution:
-   - `dotnet build ProgressiveOverload.slnx`
-2. Run the console app:
-   - `dotnet run --project ProgressiveOverload.Console/ProgressiveOverload.Console.csproj`
-3. Run the WinForms desktop app:
-   - `dotnet run --project ProgressiveOverload.WinForms/ProgressiveOverload.WinForms.csproj`
+Because the app is fully static, you can open `index.html` directly in a browser.
 
-## Persisted Data Location
+For the best service worker/PWA behavior, serve the repository with any simple static file server, for example:
 
-The app stores data as JSON in Local AppData:
+```bash
+python3 -m http.server 8080
+```
 
-- Windows path: `%LOCALAPPDATA%\ProgressiveOverload\progressive-overload-data.json`
+Then open <http://localhost:8080>.
 
-No database is required in this iteration.
+## Deploy to GitHub Pages
+
+1. Push this branch.
+2. In GitHub, go to **Settings → Pages**.
+3. Under **Build and deployment**, choose **Deploy from a branch**.
+4. Select your branch and the **/(root)** folder.
+5. Save, then open the published Pages URL on your phone.
+6. Use your browser’s **Add to Home Screen** option for quick access.
+
+## Files
+
+- `index.html` — single-page calculator UI
+- `styles.css` — mobile-first styles
+- `app.js` — calculator logic and DOM behavior
+- `app.test.js` — lightweight Node tests for the core calculator logic
+- `manifest.webmanifest` and `service-worker.js` — basic PWA support

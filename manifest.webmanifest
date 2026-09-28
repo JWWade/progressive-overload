@@ -1,0 +1,17 @@
+{
+  "name": "Progressive Overload Calculator",
+  "short_name": "Overload",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#111827",
+  "description": "A fast, phone-friendly progressive overload calculator.",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
