@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Progressive Overload Calculator</title>
+  <meta name="description" content="A fast, phone-friendly progressive overload calculator for planning your next workout target.">
+  <meta name="theme-color" content="#111827">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="card app-card">
+      <p class="eyebrow">Phone-friendly workout planning</p>
+      <h1>Progressive Overload Calculator</h1>
+      <p class="subtle">Enter your current workout, pick a strategy, and get the next target instantly.</p>
+
+      <form id="calculator-form" class="calculator-form" novalidate>
+        <div class="grid two-up">
+          <label>
+            <span>Current weight</span>
+            <div class="input-row">
+              <input id="currentWeight" name="currentWeight" type="number" min="0" step="0.5" inputmode="decimal" value="100" required>
+              <span class="unit weight-unit">lb</span>
+            </div>
+          </label>
+
+          <label>
+            <span>Reps completed</span>
+            <input id="currentReps" name="currentReps" type="number" min="1" step="1" inputmode="numeric" value="8" required>
+          </label>
+        </div>
+
+        <div class="grid two-up">
+          <label>
+            <span>Sets completed</span>
+            <input id="currentSets" name="currentSets" type="number" min="1" step="1" inputmode="numeric" value="3" required>
+          </label>
+
+          <label>
+            <span>Overload strategy</span>
+            <select id="strategy" name="strategy">
+              <option value="weight" selected>Add weight</option>
+              <option value="reps">Add reps</option>
+              <option value="percentage">Add percentage</option>
+              <option value="double">Double progression</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="grid two-up">
+          <label>
+            <span>Weight jump</span>
+            <div class="input-row">
+              <input id="weightIncrement" name="weightIncrement" type="number" min="0.5" step="0.5" inputmode="decimal" value="2.5" required>
+              <span class="unit weight-unit">lb</span>
+            </div>
+          </label>
+
+          <label>
+            <span>Percent increase</span>
+            <div class="input-row">
+              <input id="percentIncrease" name="percentIncrease" type="number" min="0" step="0.5" inputmode="decimal" value="5">
+              <span class="unit">%</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="grid two-up">
+          <label>
+            <span>Rep goal / max</span>
+            <input id="targetReps" name="targetReps" type="number" min="1" step="1" inputmode="numeric" value="10">
+          </label>
+
+          <label>
+            <span>Weight unit</span>
+            <select id="weightUnit" name="weightUnit">
+              <option value="lb" selected>lb</option>
+              <option value="kg">kg</option>
+            </select>
+          </label>
+        </div>
+
+        <button type="submit" class="primary-action">Update next target</button>
+      </form>
+    </section>
+
+    <section class="card result-card" aria-live="polite" aria-atomic="true">
+      <p class="eyebrow">Next workout target</p>
+      <div class="result-grid">
+        <div>
+          <p class="result-label">Weight</p>
+          <p id="nextWeight" class="result-value">102.5 lb</p>
+        </div>
+        <div>
+          <p class="result-label">Reps</p>
+          <p id="nextReps" class="result-value">8</p>
+        </div>
+        <div>
+          <p class="result-label">Sets</p>
+          <p id="nextSets" class="result-value">3</p>
+        </div>
+      </div>
+      <p id="strategySummary" class="summary">Add 2.5 lb next session and keep your reps and sets the same.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

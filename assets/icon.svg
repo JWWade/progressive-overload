@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Progressive Overload Calculator icon</title>
+  <desc id="desc">A stylized weight plate with an upward trend line.</desc>
+  <defs>
+    <linearGradient id="g" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="#111827"/>
+  <circle cx="128" cy="128" r="70" fill="none" stroke="url(#g)" stroke-width="24"/>
+  <circle cx="128" cy="128" r="18" fill="url(#g)"/>
+  <path d="M70 164l34-34 24 24 50-58" fill="none" stroke="#f9fafb" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+</svg>
